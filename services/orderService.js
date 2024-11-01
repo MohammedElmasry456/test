@@ -8,6 +8,7 @@ const ApiError = require("../utils/apiError");
 const orderModel = require("../models/orderModel");
 const ProductModel = require("../models/productModel");
 const { getAll, getOne } = require("./refHandler");
+const userModel = require("../models/userModel");
 
 // @desc createCashOrder
 // @route POST /api/v1/order
@@ -114,7 +115,7 @@ const webhookFun = async (session) => {
   const taxiPrice = 0;
   const shippingPrice = 0;
   const cart = await cartModel.findById(session.client_reference_id);
-  const user = await cartModel.findOne({ email: session.customer_email });
+  const user = await userModel.findOne({ email: session.customer_email });
   const { cartItems } = cart;
   const order = await orderModel.create({
     cartItems,
