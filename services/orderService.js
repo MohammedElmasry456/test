@@ -110,6 +110,7 @@ exports.updateOrderToDelivered = asyncHandle(async (req, res, next) => {
 });
 
 const webhookFun = async (session) => {
+  console.log(session);
   const taxiPrice = 0;
   const shippingPrice = 0;
   const cart = await cartModel.findById(session.client_reference_id);
