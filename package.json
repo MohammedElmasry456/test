@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "start:dev": "nodemon server.js",
-    "start:prod": "NODE_ENV=prod nodemon server.js"
+    "start:prod": "NODE_ENV=prod nodemon server.js",
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -41,5 +42,7 @@
     "eslint-plugin-react": "^7.37.0",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
+  },"engines": {
+    "node": "^20.13.1"
   }
 }
