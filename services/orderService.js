@@ -113,9 +113,7 @@ const webhookFun = async (session) => {
   const taxiPrice = 0;
   const shippingPrice = 0;
   const cart = await cartModel.findById(session.client_reference_id);
-  console.log({ cart });
   const user = await cartModel.findOne({ email: session.customer_email });
-  console.log({ user });
   const { cartItems } = cart;
   const order = await orderModel.create({
     cartItems,
@@ -212,7 +210,7 @@ exports.checkOutSession = asyncHandle(async (req, res, next) => {
     mode: "payment",
     success_url: `${req.protocol}://${req.get("host")}/api/v1/order`,
     cancel_url: `${req.protocol}://${req.get("host")}/api/v1/cart`,
-    client_reference_id: req.user._id.toString(),
+    client_reference_id: cart._id.toString(),
     customer_email: req.user.email,
     metadata: req.body.shippingAddress,
   });
