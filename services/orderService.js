@@ -37,7 +37,6 @@ exports.createCashOrder = asyncHandle(async (req, res, next) => {
     totalPrice,
   });
   if (order) {
-    console.log({ order });
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
         filter: { _id: item.product },
@@ -129,8 +128,6 @@ const webhookFun = asyncHandle(async (session) => {
     paidAt: Date.now(),
     paymentMethodType: "card",
   });
-
-  console.log("order created");
   if (order) {
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
@@ -218,7 +215,7 @@ exports.checkOutSession = asyncHandle(async (req, res, next) => {
     mode: "payment",
     success_url: `${req.protocol}://${req.get("host")}/api/v1/order`,
     cancel_url: `${req.protocol}://${req.get("host")}/api/v1/cart`,
-    client_reference_id: cart._id.toString(),
+    client_reference_id: req.params.cartId,
     customer_email: req.user.email,
     metadata: req.body.shippingAddress,
   });
