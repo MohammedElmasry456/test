@@ -130,6 +130,7 @@ const webhookFun = asyncHandle(async (session) => {
   });
 
   if (order) {
+    console.log("order created");
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
         filter: { _id: item.product },
