@@ -122,7 +122,14 @@ const webhookFun = async (session) => {
     taxiPrice,
     shippingPrice,
     totalPrice: session.amount_total / 100,
+    isPaid: true,
+    paidAt: Date.now(),
+    paymentMethodType: "card",
   });
+
+  console.log({ order });
+  console.log({ cart });
+  console.log({ user });
   if (order) {
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
