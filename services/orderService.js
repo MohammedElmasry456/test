@@ -111,11 +111,11 @@ exports.updateOrderToDelivered = asyncHandle(async (req, res, next) => {
 });
 
 const webhookFun = async (session) => {
-  console.log(session.client_reference_id);
   const taxiPrice = 0;
   const shippingPrice = 0;
   const cart = await cartModel.findById(session.client_reference_id);
   const user = await userModel.findOne({ email: session.customer_email });
+  console.log(cart);
   const { cartItems } = cart;
   const order = await orderModel.create({
     cartItems,
