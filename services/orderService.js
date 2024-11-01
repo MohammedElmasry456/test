@@ -133,39 +133,52 @@ exports.webhookCheckOut = async (req, res) => {
 // @route GET /api/v1/order/checkOut
 // @access private/users
 exports.checkOutSession = asyncHandle(async (req, res, next) => {
-  // const taxiPrice = 0;
-  // const shippingPrice = 0;
+  const taxiPrice = 0;
+  const shippingPrice = 0;
 
   const cart = await cartModel.findOne({ user: req.user._id });
   if (!cart) {
     return next(new ApiError("You Don't Have Cart Yet", 404));
   }
-  const { cartItems } = cart;
+  // const { cartItems } = cart;
 
-  // let totalPrice = cart.totalPriceAfterDis
-  //   ? cart.totalPriceAfterDis
-  //   : cart.totalPrice;
+  let totalPrice = cart.totalPriceAfterDis
+    ? cart.totalPriceAfterDis
+    : cart.totalPrice;
 
-  // totalPrice = totalPrice + taxiPrice + shippingPrice;
-  const line_items = [];
-  cartItems.map((e) => {
-    line_items.push({
-      price_data: {
-        currency: "egp",
-        product_data: {
-          name: e.product.title,
-          images: [
-            `${req.protocol}://${req.get("host")}/products/${e.product.imageCover}`,
-          ],
-        },
-        unit_amount: e.price * e.quantity * 100,
-      },
-      quantity: 1,
-    });
-  });
-
+  totalPrice = totalPrice + taxiPrice + shippingPrice;
+  // const line_items = [];
+  // cartItems.map((e) => {
+  //   line_items.push({
+  //     price_data: {
+  //       currency: "egp",
+  //       product_data: {
+  //         name: e.product.title,
+  //         images: [
+  //           `${req.protocol}://${req.get("host")}/products/${e.product.imageCover}`,
+  //         ],
+  //       },
+  //       unit_amount: e.price * e.quantity * 100,
+  //     },
+  //     quantity: 1,
+  //   });
+  //   console.log(
+  //     `${req.protocol}://${req.get("host")}/products/${e.product.imageCover}`
+  //   );
+  // });
   const session = await stripe.checkout.sessions.create({
-    line_items: line_items,
+    line_items: [
+      {
+        price_data: {
+          currency: "egp",
+          product_data: {
+            name: req.user.name,
+          },
+          unit_amount: totalPrice * 100,
+        },
+        quantity: 1,
+      },
+    ],
     mode: "payment",
     success_url: `${req.protocol}://${req.get("host")}/api/v1/order`,
     cancel_url: `${req.protocol}://${req.get("host")}/api/v1/cart`,
