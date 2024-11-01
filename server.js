@@ -37,6 +37,10 @@ if (process.env.NODE_ENV === "development") {
   console.log(`Mode: ${process.env.NODE_ENV}`);
 }
 
+app.get("/", (req, res) => {
+  res.send("hello world");
+});
+
 //Mount Routes
 mountRoutes(app);
 
