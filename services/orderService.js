@@ -110,27 +110,25 @@ exports.updateOrderToDelivered = asyncHandle(async (req, res, next) => {
   });
 });
 
-const webhookFun = async (session) => {
-  const taxiPrice = 0;
-  const shippingPrice = 0;
-  const cart = await cartModel.findById(session.client_reference_id);
-  const user = await userModel.findOne({ email: session.customer_email });
-  console.log({ cart });
-  console.log({ user });
-  console.log(session.metadata);
+const webhookFun = asyncHandle(async (session) => {
+  const email = session.customer_email;
+  const totalPrice = session.amount_total / 100;
+  const cartId = session.client_reference_id;
+  const shippingAddress = session.metadata;
+
+  const cart = await cartModel.findById(cartId);
+  const user = await userModel.findOne({ email });
 
   const order = await orderModel.create({
-    cartItems: cart.cartItems,
     user: user._id,
-    shippingAddress: session.metadata,
-    taxiPrice,
-    shippingPrice,
-    totalPrice: session.amount_total / 100,
+    cartItems: cart.cartItems,
+    shippingAddress,
+    totalPrice,
     isPaid: true,
     paidAt: Date.now(),
     paymentMethodType: "card",
   });
-  console.log(order);
+
   if (order) {
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
@@ -140,9 +138,9 @@ const webhookFun = async (session) => {
     }));
 
     await ProductModel.bulkWrite(bulkOption, {});
-    await cartModel.deleteOne({ user: user._id });
+    await cartModel.findByIdAndDelete(cartId);
   }
-};
+});
 
 exports.webhookCheckOut = async (req, res) => {
   let event = req.body;
