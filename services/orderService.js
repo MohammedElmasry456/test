@@ -37,6 +37,7 @@ exports.createCashOrder = asyncHandle(async (req, res, next) => {
     totalPrice,
   });
   if (order) {
+    console.log({ order });
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
         filter: { _id: item.product },
@@ -129,8 +130,8 @@ const webhookFun = asyncHandle(async (session) => {
     paymentMethodType: "card",
   });
 
+  console.log("order created");
   if (order) {
-    console.log("order created");
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
         filter: { _id: item.product },
