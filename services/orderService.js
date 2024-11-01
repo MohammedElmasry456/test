@@ -109,6 +109,33 @@ exports.updateOrderToDelivered = asyncHandle(async (req, res, next) => {
   });
 });
 
+const webhookFun = async (session) => {
+  const taxiPrice = 0;
+  const shippingPrice = 0;
+  const cart = await cartModel.findById(session.client_reference_id);
+  const user = await cartModel.findOne({ email: session.customer_email });
+  const { cartItems } = cart;
+  const order = await orderModel.create({
+    cartItems,
+    user: user._id,
+    shippingAddress: session.metadata,
+    taxiPrice,
+    shippingPrice,
+    totalPrice: session.amount_total / 100,
+  });
+  if (order) {
+    const bulkOption = cart.cartItems.map((item) => ({
+      updateOne: {
+        filter: { _id: item.product },
+        update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+      },
+    }));
+
+    await ProductModel.bulkWrite(bulkOption, {});
+    await cartModel.deleteOne({ user: user._id });
+  }
+};
+
 exports.webhookCheckOut = async (req, res) => {
   let event = req.body;
   if (process.env.STRIPE_Signing_Secret) {
@@ -125,8 +152,9 @@ exports.webhookCheckOut = async (req, res) => {
     }
   }
   if (event.type === "checkout.session.completed") {
-    console.log(event.data.object.client_reference_id);
+    webhookFun(event.data.object);
   }
+  res.status(200).send({ receivied: true });
 };
 
 // @desc checkOutSession

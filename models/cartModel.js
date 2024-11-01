@@ -30,13 +30,13 @@ const cartSchema = new mongoose.Schema(
   }
 );
 
-cartSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: "cartItems.product",
-    select: "title imageCover price",
-  });
-  next();
-});
+// cartSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: "cartItems.product",
+//     select: "title imageCover price",
+//   });
+//   next();
+// });
 
 const cartModel = mongoose.model("cart", cartSchema);
 module.exports = cartModel;
