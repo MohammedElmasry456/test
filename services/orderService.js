@@ -110,6 +110,7 @@ exports.updateOrderToDelivered = asyncHandle(async (req, res, next) => {
 });
 
 const webhookFun = async (session) => {
+  console.log(session.client_reference_id);
   const taxiPrice = 0;
   const shippingPrice = 0;
   const cart = await cartModel.findById(session.client_reference_id);
@@ -128,7 +129,6 @@ const webhookFun = async (session) => {
   });
 
   console.log({ order });
-  console.log({ cart });
   console.log({ user });
   if (order) {
     const bulkOption = cart.cartItems.map((item) => ({
