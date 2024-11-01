@@ -115,10 +115,11 @@ const webhookFun = async (session) => {
   const shippingPrice = 0;
   const cart = await cartModel.findById(session.client_reference_id);
   const user = await userModel.findOne({ email: session.customer_email });
-  console.log(cart);
-  const { cartItems } = cart;
+  console.log({ cart });
+  console.log({ user });
+
   const order = await orderModel.create({
-    cartItems,
+    cartItems: cart.cartItems,
     user: user._id,
     shippingAddress: session.metadata,
     taxiPrice,
@@ -128,9 +129,7 @@ const webhookFun = async (session) => {
     paidAt: Date.now(),
     paymentMethodType: "card",
   });
-
-  console.log({ order });
-  console.log({ user });
+  console.log(order);
   if (order) {
     const bulkOption = cart.cartItems.map((item) => ({
       updateOne: {
