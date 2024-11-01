@@ -117,6 +117,7 @@ const webhookFun = async (session) => {
   const user = await userModel.findOne({ email: session.customer_email });
   console.log({ cart });
   console.log({ user });
+  console.log(session.metadata);
 
   const order = await orderModel.create({
     cartItems: cart.cartItems,
