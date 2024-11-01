@@ -19,7 +19,7 @@ dbConnection();
 const app = express();
 app.post(
   "/webhoock-checkout",
-  express.json({ type: "application/json" }),
+  express.raw({ type: "application/json" }),
   webhookCheckOut
 );
 
