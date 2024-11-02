@@ -138,6 +138,9 @@ const webhookFun = asyncHandle(async (session) => {
 
     await ProductModel.bulkWrite(bulkOption, {});
     await cartModel.findByIdAndDelete(cartId);
+    console.log("Process Completed Successfully");
+  } else {
+    console.log("There Are Error In Process");
   }
 });
 
@@ -215,7 +218,7 @@ exports.checkOutSession = asyncHandle(async (req, res, next) => {
     mode: "payment",
     success_url: `${req.protocol}://${req.get("host")}/api/v1/order`,
     cancel_url: `${req.protocol}://${req.get("host")}/api/v1/cart`,
-    client_reference_id: req.params.cartId,
+    client_reference_id: cart._id.toString(),
     customer_email: req.user.email,
     metadata: req.body.shippingAddress,
   });
