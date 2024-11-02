@@ -13,7 +13,7 @@ const {
 const router = express.Router();
 router.use(protect);
 
-router.get("/checkOut/:cartId", checkOutSession);
+router.get("/checkOut", checkOutSession);
 
 router
   .route("/")
